@@ -165,23 +165,27 @@ const readChoice = (stored: unknown): Choice => {
   }
 }
 
-export const register: Register = on => {
-  const apply = ($: ThemeSetter, choice: Choice) => {
-    if (choice.scene === 'off') return undefined
-    const palette = PALETTES[choice.scene]
-    return $.theme.set({
-      backdrop: {
-        id: choice.scene,
-        colorScheme: choice.scene === 'dusk' ? 'dark' : 'light',
-        // Untinted, the panels keep the app's own colour, so text stays
-        // readable in light and dark mode alike; `tint` commits to the scene.
-        glass: choice.isTinted
-          ? { blur: 18, tint: palette.tint, opacity: 0.74 }
-          : { blur: 18, opacity: 0.78 },
-      },
-    })
+// Two engine builds spell the backdrop differently: newer ones name it
+// `scene` with the mode beside it, older ones `id` with the mode inside.
+// A build refuses the spelling it does not know, so try the newer first.
+const apply = async ($: ThemeSetter, choice: Choice) => {
+  if (choice.scene === 'off') return undefined
+  const palette = PALETTES[choice.scene]
+  const mode = choice.scene === 'dusk' ? 'dark' : 'light'
+  // Untinted, the panels keep the app's own colour, so text stays readable
+  // in light and dark mode alike; `tint` commits to the scene.
+  const glass = choice.isTinted
+    ? { blur: 18, tint: palette.tint, opacity: 0.74 }
+    : { blur: 18, opacity: 0.78 }
+  try {
+    return await $.theme.set({ backdrop: { scene: choice.scene, glass }, overrideColorScheme: mode })
+  } catch {
+    const older = { backdrop: { id: choice.scene, glass, colorScheme: mode } }
+    return await $.theme.set(older as unknown as ThemeSetArgs)
   }
+}
 
+export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: COMMAND,
@@ -217,13 +221,15 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Backdrop' }, async ($, e, next) => {
-    if (e.props.plugin !== PLUGIN || !isScene(e.props.id)) return next(e)
+    const props: { plugin: string; scene?: string; id?: string } = e.props
+    const name = props.scene ?? props.id ?? ''
+    if (props.plugin !== PLUGIN || !isScene(name)) return next(e)
     if (e.surface !== 'desktop' && e.surface !== 'mobile') return next(e)
     const { Svg } = $.ui.resolve(e)
 
     return (
       <Svg
-        source={scene(e.props.id)}
+        source={scene(name)}
         alt="Pastel-grunge backdrop: soft pastel glows, sparkles and pixel hearts over a scratched, grainy field"
         isInteractive
       />
