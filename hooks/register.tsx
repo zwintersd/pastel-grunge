@@ -150,9 +150,6 @@ ${blob('g-butter', 1420, 900, 300, '-60 -50', 77, p.blobOpacity * 0.7)}
 <g fill="none" stroke="#7a4a5e" stroke-width="1.1" stroke-linecap="round" opacity=".3"><path d="M1222 232l34 40M1230 222l42 50M1240 214l44 54M1226 248l20 24M1292 262l14 10M1300 254l18 14"/></g>
 <path d="M1226 150a92 92 0 0 0 30 106" fill="none" stroke="#fffdf0" stroke-width="3" stroke-linecap="round" opacity=".75"/>
 </g>
-<g><path d="M1330 271v52" stroke="${p.ink}" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55" fill="none"/>
-<path transform="translate(1330 338) scale(15)" d="M0-1Q.14-.14 1 0Q.14.14 0 1Q-.14.14-1 0Q-.14-.14 0-1Z" fill="${BUTTER}"><animate attributeName="opacity" values="1;.55;1" dur="3.7s" repeatCount="indefinite"/></path>
-<animateTransform attributeName="transform" type="rotate" values="-5 1330 271;5 1330 271;-5 1330 271" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/></g>
 ${stars}
 ${pixelHeart(1120, 610, 9, PINK, 6, 0)}
 ${pixelHeart(240, 700, 6, LILAC, 7.5, 2)}
