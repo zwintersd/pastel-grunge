@@ -1,0 +1,5 @@
+{
+  "name": "pastel-grunge",
+  "owner": { "name": "zwintersd" },
+  "plugins": [{ "name": "pastel-grunge", "source": "./" }]
+}
