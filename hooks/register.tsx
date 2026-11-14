@@ -127,6 +127,9 @@ ${gradient('g-pink', PINK)}${gradient('g-lilac', LILAC)}${gradient('g-mint', MIN
 <radialGradient id="dots-fade"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
 <mask id="dots-mask"><circle cx="190" cy="230" r="330" fill="url(#dots-fade)"/></mask>
 <mask id="moon-mask"><rect width="${W}" height="${H}" fill="#fff"/><circle cx="1352" cy="158" r="74" fill="#000"/></mask>
+<clipPath id="moon-clip"><circle cx="1310" cy="180" r="92"/></clipPath>
+<radialGradient id="moon-body" cx=".3" cy=".68" r=".8"><stop offset="0" stop-color="#fffbe6"/><stop offset=".45" stop-color="${BUTTER}"/><stop offset="1" stop-color="#ffb9a6"/></radialGradient>
+<radialGradient id="moon-halo"><stop offset=".3" stop-color="${BUTTER}" stop-opacity=".34"/><stop offset=".6" stop-color="${PINK}" stop-opacity=".12"/><stop offset="1" stop-color="${PINK}" stop-opacity="0"/></radialGradient>
 <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .45  0 0 0 0 .5  0 0 0 ${p.grain * 4} -${p.grain * 1.4}"/></filter>
 <filter id="smudge" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".006 .012" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.6 -.75"/></filter>
 </defs>
@@ -137,7 +140,19 @@ ${blob('g-mint', 760, 860, 420, '70 -80', 63, p.blobOpacity * 0.8)}
 ${blob('g-butter', 1420, 900, 300, '-60 -50', 77, p.blobOpacity * 0.7)}
 <g transform="translate(0 ${H - 420})" mask="url(#floor-mask)" opacity=".07"><rect x="-800" y="0" width="${W + 1600}" height="420" fill="url(#checker)" transform="skewX(-38)"><animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;120 0" dur="48s" repeatCount="indefinite"/></rect></g>
 <rect width="640" height="620" fill="url(#dots)" mask="url(#dots-mask)" opacity=".1"/>
-<g mask="url(#moon-mask)"><circle cx="1310" cy="180" r="92" fill="${BUTTER}" opacity=".8"><animate attributeName="opacity" values=".8;.55;.8" dur="11s" repeatCount="indefinite"/></circle></g>
+<circle cx="1310" cy="180" r="230" fill="url(#moon-halo)"><animate attributeName="opacity" values="1;.6;1" dur="11s" repeatCount="indefinite"/></circle>
+<circle cx="1310" cy="180" r="92" fill="${LILAC}" opacity=".1"/>
+<circle cx="1310" cy="180" r="92" fill="none" stroke="${p.ink}" stroke-width="1" stroke-dasharray="2 7" opacity=".25"/>
+<g mask="url(#moon-mask)" clip-path="url(#moon-clip)">
+<circle cx="1310" cy="180" r="92" fill="url(#moon-body)"/>
+<g fill="#c98a7a" opacity=".38"><circle cx="1250" cy="215" r="10"/><circle cx="1272" cy="246" r="6.5"/><circle cx="1238" cy="178" r="5.5"/><circle cx="1295" cy="258" r="4"/><circle cx="1262" cy="150" r="3.5"/><circle cx="1232" cy="236" r="3"/></g>
+<g fill="none" stroke="#fff8dc" stroke-width="1.4" opacity=".7"><path d="M1242 209a10 10 0 0 1 14-3"/><path d="M1267 242a6.5 6.5 0 0 1 9-2"/><path d="M1234 175a5.5 5.5 0 0 1 7-2"/></g>
+<g fill="none" stroke="#7a4a5e" stroke-width="1.1" stroke-linecap="round" opacity=".3"><path d="M1222 232l34 40M1230 222l42 50M1240 214l44 54M1226 248l20 24M1292 262l14 10M1300 254l18 14"/></g>
+<path d="M1226 150a92 92 0 0 0 30 106" fill="none" stroke="#fffdf0" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+</g>
+<g><path d="M1330 271v52" stroke="${p.ink}" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55" fill="none"/>
+<path transform="translate(1330 338) scale(15)" d="M0-1Q.14-.14 1 0Q.14.14 0 1Q-.14.14-1 0Q-.14-.14 0-1Z" fill="${BUTTER}"><animate attributeName="opacity" values="1;.55;1" dur="3.7s" repeatCount="indefinite"/></path>
+<animateTransform attributeName="transform" type="rotate" values="-5 1330 271;5 1330 271;-5 1330 271" dur="7s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/></g>
 ${stars}
 ${pixelHeart(1120, 610, 9, PINK, 6, 0)}
 ${pixelHeart(240, 700, 6, LILAC, 7.5, 2)}
@@ -175,8 +190,8 @@ const apply = async ($: ThemeSetter, choice: Choice) => {
   // Untinted, the panels keep the app's own colour, so text stays readable
   // in light and dark mode alike; `tint` commits to the scene.
   const glass = choice.isTinted
-    ? { blur: 18, tint: palette.tint, opacity: 0.74 }
-    : { blur: 18, opacity: 0.78 }
+    ? { blur: 1, tint: palette.tint, opacity: 0.16 }
+    : { blur: 1, opacity: 0.1 }
   try {
     return await $.theme.set({ backdrop: { scene: choice.scene, glass }, overrideColorScheme: mode })
   } catch {
